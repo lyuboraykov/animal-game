@@ -3,7 +3,8 @@
   :url "https://github.com/lyuboraykov/animal-game"
   :license {:name "MIT License"
             :url "https://opensource.org/licenses/MIT"}
-  :dependencies [[org.clojure/clojure "1.7.0"]]
+  :dependencies [[org.clojure/clojure "1.7.0"]
+                 [org.clojure/data.json "0.2.6"]]
   :main ^:skip-aot animal-game.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})

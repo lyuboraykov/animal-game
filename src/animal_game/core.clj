@@ -1,31 +1,50 @@
 (ns animal-game.core
   (:gen-class))
 
-(defn animal-found? [] false)
+ (require '[clojure.data.json :as json])
+ (require '[clojure.java.io :as io])
 
-(def root-question "Is it a cat?")
+(defn match-feature?
+  "Return whether an item matches a feature"
+  [item feature]
+  (get item feature))
 
-(defn save-answer
-    "Save the answer of the question in the JSON file"
-    [decision-tree question answer]
-    (println "Answer saved!"))
+(defn last-feature-from-questions
+  "Return the first property name of the questions"
+  [questions]
+  (first (keys (peek questions))))
 
-(defn next-question
-  "Get the next question to be asked"
-  [decision-tree]
-  root-question)
+(defn build-decision-tree
+  "Builds decision tree from samples and questions"
+  [samples questions]
+  (let [feature (last-feature-from-questions questions)]
+    (cond
+      (= (count samples) 0) nil
+      (= (count samples) 1) (map #(get % "name") samples)
+      :else { :attribute feature
+              :true (build-decision-tree
+                     (filter #(match-feature? % feature)
+                             samples)
+                     (pop questions))
+              :false (build-decision-tree
+                      (filter #(not (match-feature? % feature))
+                              samples)
+                      (pop questions))})))
 
-(defn ask-question
-  "Ask the user to provide an aswer for a question."
-  [decision-tree]
-  (while (not (animal-found?))
-    (let [question (next-question decision-tree)](
-      (println question)
-      (let [answer (read-line)]
-      (save-answer decision-tree question answer))))))
+(defn json-file->samples
+  "Return a map of all samples in the json file"
+  []
+  (json/read-str (slurp (io/resource "./samples.json"))))
 
+(defn json-file->questions
+  "Return a map of all questions in the json file"
+  []
+  (json/read-str (slurp (io/resource "./questions.json"))))
 
 (defn -main
-    "Simple user input and output."
-    [& args]
-    (ask-question {}))
+  "Starts the program."
+  [& args]
+  (let [samples (json-file->samples)
+        questions (json-file->questions)]
+    (println (build-decision-tree samples
+                                  questions))))
