@@ -1,0 +1,122 @@
+[
+    {
+        "name": "котка",
+        "isItTwolegged": false,
+        "isItWarmBlooded": true,
+        "isItFurry": true,
+        "isItFlying": false,
+        "isItSwimming": false,
+        "isItDigging": false,
+        "isItPredator": true,
+        "isItWild": false,
+        "isItLargerThanMan": false
+    },
+    {
+        "name": "куче",
+        "isItTwolegged": false,
+        "isItWarmBlooded": true,
+        "isItFurry": true,
+        "isItFlying": false,
+        "isItSwimming": true,
+        "isItDigging": true,
+        "isItPredator": true,
+        "isItWild": false,
+        "isItLargerThanMan": false
+    },
+    {
+        "name": "хамстер",
+        "isItTwolegged": false,
+        "isItWarmBlooded": true,
+        "isItFurry": true,
+        "isItFlying": false,
+        "isItSwimming": false,
+        "isItDigging": true,
+        "isItPredator": false,
+        "isItWild": false,
+        "isItLargerThanMan": false
+    },
+    {
+        "name": "петел",
+        "isItTwolegged": true,
+        "isItWarmBlooded": true,
+        "isItFurry": false,
+        "isItFlying": false,
+        "isItSwimming": false,
+        "isItDigging": false,
+        "isItPredator": false,
+        "isItWild": false,
+        "isItLargerThanMan": false
+    },
+    {
+        "name": "крава",
+        "isItTwolegged": false,
+        "isItWarmBlooded": true,
+        "isItFurry": false,
+        "isItFlying": false,
+        "isItSwimming": false,
+        "isItDigging": false,
+        "isItPredator": false,
+        "isItWild": false,
+        "isItLargerThanMan": true
+    },
+    {
+        "name": "златна рибка",
+        "isItTwolegged": false,
+        "isItWarmBlooded": false,
+        "isItFurry": false,
+        "isItFlying": false,
+        "isItSwimming": true,
+        "isItDigging": false,
+        "isItPredator": false,
+        "isItWild": false,
+        "isItLargerThanMan": false
+    },
+    {
+        "name": "лъв",
+        "isItTwolegged": false,
+        "isItWarmBlooded": true,
+        "isItFurry": true,
+        "isItFlying": false,
+        "isItSwimming": false,
+        "isItDigging": false,
+        "isItPredator": true,
+        "isItWild": true,
+        "isItLargerThanMan": true
+    },
+    {
+        "name": "паун",
+        "isItTwolegged": true,
+        "isItWarmBlooded": true,
+        "isItFurry": false,
+        "isItFlying": false,
+        "isItSwimming": false,
+        "isItDigging": false,
+        "isItPredator": false,
+        "isItWild": true,
+        "isItLargerThanMan": false
+    },
+    {
+        "name": "врабче",
+        "isItTwolegged": true,
+        "isItWarmBlooded": true,
+        "isItFurry": false,
+        "isItFlying": true,
+        "isItSwimming": false,
+        "isItDigging": false,
+        "isItPredator": false,
+        "isItWild": true,
+        "isItLargerThanMan": false
+    },
+    {
+        "name": "бяла акула",
+        "isItTwolegged": false,
+        "isItWarmBlooded": false,
+        "isItFurry": false,
+        "isItFlying": false,
+        "isItSwimming": true,
+        "isItDigging": false,
+        "isItPredator": true,
+        "isItWild": true,
+        "isItLargerThanMan": true
+    }
+]
