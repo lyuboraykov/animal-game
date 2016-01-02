@@ -49,3 +49,34 @@
   (testing "simple conversion from question to attrubute name"
     (is (= (question->attribute-name "a sample question")
            "a-sample-question"))))
+
+(deftest get-boolean-answer-positive-simple
+  (testing "does get-boolean-answer return true on positive answers first caps"
+    (with-redefs-fn {#'read-line #(str "Да")}
+      #(is (get-boolean-answer)))))
+
+(deftest get-boolean-answer-positive-caps
+  (testing "does get-boolean-answer return true on positive answers all caps"
+    (with-redefs-fn {#'read-line #(str "ДА")}
+      #(is (get-boolean-answer)))))
+
+(deftest get-boolean-answer-positive-lower
+  (testing "does get-boolean-answer return true on positive answers lowercase"
+    (with-redefs-fn {#'read-line #(str "да")}
+      #(is (get-boolean-answer)))))
+
+(deftest get-boolean-answer-positive-spaces
+  (testing "does get-boolean-answer return true on positive answers with spaces"
+    (with-redefs-fn {#'read-line #(str "    да ")}
+      #(is (get-boolean-answer)))))
+
+(deftest get-boolean-answer-positive-negative
+  (testing "does get-boolean-answer return false on negative answers"
+    (with-redefs-fn {#'read-line #(str "не")}
+      #(is (not (get-boolean-answer))))))
+
+(deftest guess-animal-simple
+  (testing "guess an animal, answering only with yes"
+    (with-redefs-fn {#'read-line #(str "да")}
+      #(is (= (get (guess-animal mock-decision-tree mock-questions) "name"))
+           "орел"))))

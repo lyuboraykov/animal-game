@@ -25,8 +25,9 @@
                       (filter #(get % attribute true) animals)
                       (rest questions-list))
               :false (build-decision-tree
-                       ; when an attribute is missing, the animal should appear
-                       ; on both sides of the tree, thus the false value of get
+                       ;; when an attribute is missing,
+                       ;; the animal should appear on both sides of the tree,
+                       ;; thus the false default of get
                        (filter #(not (get % attribute false)) animals)
                        (rest questions-list))
             })))
