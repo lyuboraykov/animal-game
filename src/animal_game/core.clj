@@ -4,6 +4,9 @@
  (require '[clojure.data.json :as json])
  (require '[clojure.java.io :as io])
 
+(def animals-file-path "./animals.json")
+(def questions-file-path "./questions.json")
+
 (defn match-feature?
   "Return whether an item matches a feature"
   [item feature]
@@ -31,15 +34,10 @@
                               animals)
                       (rest questions-list))})))
 
-(defn json-file->animals
-  "Return a map of all animals in the json file"
-  []
-  (json/read-str (slurp (io/resource "./animals.json"))))
-
-(defn json-file->questions
-  "Return a map of all questions in the json file"
-  []
-  (json/read-str (slurp (io/resource "./questions.json"))))
+(defn json-file->object
+  "Read a json file into an object"
+  [file-path]
+  (json/read-str (slurp (io/resource file-path))))
 
 (defn attribute->question
   "Return a question string from the given decision tree attribute"
@@ -50,7 +48,7 @@
   "Get a true/false answer from the user console input"
   []
   (let [answer (read-line)]
-    (re-matches #"^ *[Дд][аА] *$" answer)))
+    (boolean (re-matches #"^ *[Дд][аА] *$" answer))))
 
 (defn write-object-to-file
   "Persist an object to a json file"
@@ -63,7 +61,7 @@
   (println "Не познавам това животно. Как се казва?")
   (let [animal-name (read-line)]
     (write-object-to-file (conj animals (assoc animal "name" animal-name))
-                           "./animals.json")
+                           animals-file-path)
     (println "Животното бе добавено!")))
 
 (defn guess-animal
@@ -99,20 +97,45 @@
   [question]
   (clojure.string/replace question #" " "-"))
 
-(defn add-new-animal-characteristic
-  "Add a new question to differentiate new animal from the old one"
+(defn add-animal-attribute
+  "Add an animal which has the same attributes as another one except a new one"
+  [animals original-animal animal-name attribute-name attribute-value]
+  (let [new-animal (assoc original-animal "name" animal-name
+                                          attribute-name attribute-value)
+        modified-old-animal (assoc original-animal attribute-name
+                                                   (not attribute-value))]
+    (def animals-to-write (filter #(not (= (get % "name")
+                                           (get original-animal "name")))
+                                  animals))
+    (write-object-to-file (conj animals-to-write new-animal modified-old-animal)
+                          animals-file-path)))
+
+(defn add-new-question
+  "Add a new question to the library"
+  [questions attribute question]
+  (write-object-to-file (assoc questions attribute question)
+                        questions-file-path))
+
+(defn add-ambiguous-animal
+  "Add a new animal which has the same properties as an already existing one."
   [animal animals questions]
   (println "Предавам се. Кое е твоето животно?")
-  (def new-animal (read-line))
+  (def new-animal-name (read-line))
   (println (str "Какво да питам за да го различа от " (get animal "name") "?"))
   (def new-question (read-line))
+  (println (str new-animal-name " отговаря ли с 'Да' на въпроса?"))
+  (let [new-attribute-value (get-boolean-answer)
+        new-attribute-name (question->attribute-name new-question)]
+    (add-new-question questions new-attribute-name new-question)
+    (add-animal-attribute animals animal new-animal-name
+                          new-attribute-name new-attribute-value))
   (println "Благодаря, запомних!"))
 
 (defn -main
   "Starts the program."
   [& args]
-  (let [animals (json-file->animals)
-        questions (json-file->questions)]
+  (let [animals (json-file->object animals-file-path)
+        questions (json-file->object questions-file-path)]
     (def decision-tree (build-decision-tree animals
                                             (into '() questions)))
     (def animal (guess-animal decision-tree questions))
@@ -120,4 +143,4 @@
       (add-unknown-animal animals animal)
       (if (animal-correct? (get animal "name"))
         (println "Благодаря, че играхме!")
-        (add-new-animal-characteristic animal animals questions)))))
+        (add-ambiguous-animal animal animals questions)))))
