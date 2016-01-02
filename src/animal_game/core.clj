@@ -52,20 +52,36 @@
   (let [answer (read-line)]
     (re-matches #"^ *[Дд][аА] *$" answer)))
 
+(defn add-new-sample
+  "Add a new animal to the database"
+  [samples animal]
+  (println "Не познавам това животно. Как се казва?")
+  (let [animal-name (read-line)]
+    (spit (io/resource "./samples.json")
+          (json/write-str (conj samples (assoc animal "name" animal-name))))
+    (println "Животното бе добавено!")))
+
 (defn guess-animal
   "Ask questions from the decision tree until the animal
   is guessed or we are out of questions"
   [decision-tree questions]
-  (if (= (count decision-tree ) 1)
-    (first decision-tree)
-    (do
-      (def current-question (attribute->question
-                            (:attribute decision-tree)
-                            questions))
-      (println current-question)
-      (if (get-boolean-answer)
-        (guess-animal (:true decision-tree) questions)
-        (guess-animal (:false decision-tree) questions)))))
+  (loop [decision-tree decision-tree animal-properties {}]
+    (cond
+      (nil? decision-tree) (assoc animal-properties "name" nil)
+      (= (count decision-tree) 1) (assoc animal-properties
+                                         "name" (first decision-tree))
+      :else (do
+        (def current-question (attribute->question
+                              (:attribute decision-tree)
+                              questions))
+        (println current-question)
+        (if (get-boolean-answer)
+          (recur (:true decision-tree)
+                 (assoc animal-properties
+                        (:attribute decision-tree) true))
+          (recur (:false decision-tree)
+                 (assoc animal-properties
+                        (:attribute decision-tree) false)))))))
 
 (defn -main
   "Starts the program."
@@ -75,4 +91,6 @@
     (def decision-tree (build-decision-tree samples
                                             (into '() questions)))
     (def animal (guess-animal decision-tree questions))
-    (println (str "Животното " animal " ли е?"))))
+    (if (nil? (get animal "name"))
+      (add-new-sample samples animal)
+      (println (str "Животното " (get animal "name") " ли е?")))))
