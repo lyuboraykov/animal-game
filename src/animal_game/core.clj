@@ -83,6 +83,21 @@
                  (assoc animal-properties
                         (:attribute decision-tree) false)))))))
 
+(defn animal-correct?
+  "Ask the user if this is the right animal"
+  [animal-name]
+  (println (str "Животното " animal-name " ли е?"))
+  (get-boolean-answer))
+
+(defn add-new-question
+  "Add a new question to differentiate new animal from the old one"
+  [animal samples questions]
+  (println "Предавам се. Кое е твоето животно?")
+  (def new-animal (read-line))
+  (println (str "Какво да питам за да го залича от " (get animal "name") "?"))
+  (def new-question (read-line))
+  (println "Благодаря, запомних!"))
+
 (defn -main
   "Starts the program."
   [& args]
@@ -93,4 +108,7 @@
     (def animal (guess-animal decision-tree questions))
     (if (nil? (get animal "name"))
       (add-new-sample samples animal)
-      (println (str "Животното " (get animal "name") " ли е?")))))
+      (if (animal-correct? (get animal "name"))
+        (println "Благодаря, че играхме!")
+        (add-new-question animal samples questions)
+        ))))
