@@ -7,42 +7,34 @@
 (def animals-file-path "./animals.json")
 (def questions-file-path "./questions.json")
 
-(defn match-feature?
-  "Return whether an item matches a feature"
-  [item feature]
-  (get item feature true))
-
-(defn first-feature-from-questions
-  "Return the first property name of the questions"
+(defn first-attribute-from-questions
+  "Return the first attribute name of the questions"
   [questions-list]
   (first (first questions-list)))
 
 (defn build-decision-tree
   "Builds decision tree from animals and questions-list"
   [animals questions-list]
-  (let [feature (first-feature-from-questions questions-list)]
+  (let [attribute (first-attribute-from-questions questions-list)]
     (cond
       (empty? animals) nil
       (= (count animals) 1) (map #(get % "name") animals)
-      :else { :attribute feature
+      :else {
+              :attribute attribute
               :true (build-decision-tree
-                     (filter #(match-feature? % feature)
-                             animals)
-                     (rest questions-list))
+                      (filter #(get % attribute true) animals)
+                      (rest questions-list))
               :false (build-decision-tree
-                      (filter #(not (match-feature? % feature))
-                              animals)
-                      (rest questions-list))})))
+                       ; when an attribute is missing, the animal should appear
+                       ; on both sides of the tree, thus the false value of get
+                       (filter #(not (get % attribute false)) animals)
+                       (rest questions-list))
+            })))
 
 (defn json-file->object
   "Read a json file into an object"
   [file-path]
   (json/read-str (slurp (io/resource file-path))))
-
-(defn attribute->question
-  "Return a question string from the given decision tree attribute"
-  [attribute questions]
-  (get questions attribute))
 
 (defn get-boolean-answer
   "Get a true/false answer from the user console input"
@@ -74,9 +66,7 @@
       (= (count decision-tree) 1) (assoc animal-properties
                                          "name" (first decision-tree))
       :else (do
-        (def current-question (attribute->question
-                              (:attribute decision-tree)
-                              questions))
+        (def current-question (get questions (:attribute decision-tree)))
         (println current-question)
         (if (get-boolean-answer)
           (recur (:true decision-tree)
