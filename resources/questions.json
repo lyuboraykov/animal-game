@@ -1,11 +1,11 @@
-[
-    {"isItTwolegged": "Два крака ли има?"},
-    {"isItWarmBlooded": "Топлокръвно ли е?"},
-    {"isItFurry": "Космато ли е?"},
-    {"isItFlying": "Може ли да лети?"},
-    {"isItSwimming": "Може ли да плува?"},
-    {"isItDigging": "Копае ли дупки?"},
-    {"isItPredator": "Хищник ли е?"},
-    {"isItWild": "Диво ли е?"},
-    {"isItLargerThanMan": "По-голямо ли е от човек?"},
-]
+{
+  "isItTwolegged": "Два крака ли има?",
+  "isItWarmBlooded": "Топлокръвно ли е?",
+  "isItFurry": "Космато ли е?",
+  "isItFlying": "Може ли да лети?",
+  "isItSwimming": "Може ли да плува?",
+  "isItDigging": "Копае ли дупки?",
+  "isItPredator": "Хищник ли е?",
+  "isItWild": "Диво ли е?",
+  "isItLargerThanMan": "По-голямо ли е от човек?"
+}
