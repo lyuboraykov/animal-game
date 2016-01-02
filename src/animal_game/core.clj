@@ -15,26 +15,26 @@
   (first (first questions-list)))
 
 (defn build-decision-tree
-  "Builds decision tree from samples and questions-list"
-  [samples questions-list]
+  "Builds decision tree from animals and questions-list"
+  [animals questions-list]
   (let [feature (first-feature-from-questions questions-list)]
     (cond
-      (empty? samples) nil
-      (= (count samples) 1) (map #(get % "name") samples)
+      (empty? animals) nil
+      (= (count animals) 1) (map #(get % "name") animals)
       :else { :attribute feature
               :true (build-decision-tree
                      (filter #(match-feature? % feature)
-                             samples)
+                             animals)
                      (rest questions-list))
               :false (build-decision-tree
                       (filter #(not (match-feature? % feature))
-                              samples)
+                              animals)
                       (rest questions-list))})))
 
-(defn json-file->samples
-  "Return a map of all samples in the json file"
+(defn json-file->animals
+  "Return a map of all animals in the json file"
   []
-  (json/read-str (slurp (io/resource "./samples.json"))))
+  (json/read-str (slurp (io/resource "./animals.json"))))
 
 (defn json-file->questions
   "Return a map of all questions in the json file"
@@ -52,13 +52,18 @@
   (let [answer (read-line)]
     (re-matches #"^ *[Дд][аА] *$" answer)))
 
-(defn add-new-sample
-  "Add a new animal to the database"
-  [samples animal]
+(defn write-object-to-file
+  "Persist an object to a json file"
+  [object json-file-path]
+  (spit (io/resource json-file-path) (json/write-str object)))
+
+(defn add-unknown-animal
+  "Add a new animal to the database by asking questions about it"
+  [animals animal]
   (println "Не познавам това животно. Как се казва?")
   (let [animal-name (read-line)]
-    (spit (io/resource "./samples.json")
-          (json/write-str (conj samples (assoc animal "name" animal-name))))
+    (write-object-to-file (conj animals (assoc animal "name" animal-name))
+                           "./animals.json")
     (println "Животното бе добавено!")))
 
 (defn guess-animal
@@ -89,26 +94,30 @@
   (println (str "Животното " animal-name " ли е?"))
   (get-boolean-answer))
 
-(defn add-new-question
+(defn question->attribute-name
+  "Get an attribute name from a full question"
+  [question]
+  (clojure.string/replace question #" " "-"))
+
+(defn add-new-animal-characteristic
   "Add a new question to differentiate new animal from the old one"
-  [animal samples questions]
+  [animal animals questions]
   (println "Предавам се. Кое е твоето животно?")
   (def new-animal (read-line))
-  (println (str "Какво да питам за да го залича от " (get animal "name") "?"))
+  (println (str "Какво да питам за да го различа от " (get animal "name") "?"))
   (def new-question (read-line))
   (println "Благодаря, запомних!"))
 
 (defn -main
   "Starts the program."
   [& args]
-  (let [samples (json-file->samples)
+  (let [animals (json-file->animals)
         questions (json-file->questions)]
-    (def decision-tree (build-decision-tree samples
+    (def decision-tree (build-decision-tree animals
                                             (into '() questions)))
     (def animal (guess-animal decision-tree questions))
     (if (nil? (get animal "name"))
-      (add-new-sample samples animal)
+      (add-unknown-animal animals animal)
       (if (animal-correct? (get animal "name"))
         (println "Благодаря, че играхме!")
-        (add-new-question animal samples questions)
-        ))))
+        (add-new-animal-characteristic animal animals questions)))))
