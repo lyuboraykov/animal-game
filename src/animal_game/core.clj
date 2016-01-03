@@ -67,15 +67,15 @@
       (= (count decision-tree) 1) (assoc animal-properties
                                          "name" (first decision-tree))
       :else (do
-        (def current-question (get questions (:attribute decision-tree)))
-        (println current-question)
-        (if (get-boolean-answer)
-          (recur (:true decision-tree)
-                 (assoc animal-properties
-                        (:attribute decision-tree) true))
-          (recur (:false decision-tree)
-                 (assoc animal-properties
-                        (:attribute decision-tree) false)))))))
+        (let [current-question (get questions (:attribute decision-tree))]
+          (println current-question)
+          (if (get-boolean-answer)
+            (recur (:true decision-tree)
+                   (assoc animal-properties
+                          (:attribute decision-tree) true))
+            (recur (:false decision-tree)
+                   (assoc animal-properties
+                          (:attribute decision-tree) false))))))))
 
 (defn animal-correct?
   "Ask the user if this is the right animal"
